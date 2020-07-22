@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 class App extends Component {
   state = {
@@ -8,47 +9,59 @@ class App extends Component {
     catcherList: ['Roy Campanella', 'Elston Howard', 'Kenji Jojima'],
     newPitcher: '',
     newCatcher: '',
-  }
+  };
 
-  handlePitcherNameChange = event => {
+  handlePitcherNameChange = (event) => {
     this.setState({
       newPitcher: event.target.value,
     });
-  }
+  };
 
-  handlePitcherSubmit = event => {
+  handlePitcherSubmit = (event) => {
     event.preventDefault();
-    this.setState({
-      newPitcher: '',
-      pitcherList: [ ...this.state.pitcherList, this.state.newPitcher ],
+    this.props.dispatch({
+      payload: this.state.pitcherList,
+      type: 'ADD_PITCHER_TO_LIST',
     });
-  }
 
-  handlePitcherSelectClick = selectedPitcher => () => {
-    this.setState({
-      currentPitcher: selectedPitcher,
+    // this.setState({
+    //   newPitcher: '',
+    //   pitcherList: [ ...this.state.pitcherList, this.state.newPitcher ],
+    // });
+  };
+
+  handlePitcherSelectClick = (selectedPitcher) => () => {
+    this.props.dispatch({
+      type: 'SELECT_PITCHER',
+      payload: this.state.currentPitcher,
     });
-  }
 
-  handleCatcherNameChange = event => {
+    // this.setState({
+    //   currentPitcher: selectedPitcher,
+    // });
+  };
+
+  handleCatcherNameChange = (event) => {
     this.setState({
       newCatcher: event.target.value,
     });
-  }
+  };
 
-  handleCatcherSubmit = event => {
+  handleCatcherSubmit = (event) => {
     event.preventDefault();
-    this.setState({
-      newCatcher: '',
-      catcherList: [ ...this.state.catcherList, this.state.newCatcher ],
+    this.props.dispatch({
+      type: 'ADD_CATCHER',
+      payload: {
+        catcherList: [...this.state.catcherList, this.state.newCatcher],
+      },
     });
-  }
+  };
 
-  handleCatcherSelectClick = selectedCatcher => () => {
+  handleCatcherSelectClick = (selectedCatcher) => () => {
     this.setState({
       currentCatcher: selectedCatcher,
     });
-  }
+  };
 
   render() {
     return (
@@ -69,12 +82,8 @@ class App extends Component {
           <button type="submit">Add Pitcher</button>
         </form>
         <ul>
-          {this.state.pitcherList.map(pitcher => (
-            <li
-              onClick={this.handlePitcherSelectClick(pitcher)}
-            >
-              {pitcher}
-            </li>
+          {this.state.pitcherList.map((pitcher) => (
+            <li onClick={this.handlePitcherSelectClick(pitcher)}>{pitcher}</li>
           ))}
         </ul>
         <h3>All Catchers</h3>
@@ -88,12 +97,8 @@ class App extends Component {
           <button type="submit">Add Catcher</button>
         </form>
         <ul>
-          {this.state.catcherList.map(catcher => (
-            <li
-              onClick={this.handleCatcherSelectClick(catcher)}
-            >
-              {catcher}
-            </li>
+          {this.state.catcherList.map((catcher) => (
+            <li onClick={this.handleCatcherSelectClick(catcher)}>{catcher}</li>
           ))}
         </ul>
       </div>
@@ -101,4 +106,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect()(App);
